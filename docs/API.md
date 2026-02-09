@@ -1,6 +1,12 @@
 # ResolveAI — API Contract
 
 Base URL (local): `http://localhost:8000`
+Base URL (production): <https://resolveai-backend-epgr7hjata-el.a.run.app>
+
+Swagger (production): <https://resolveai-backend-epgr7hjata-el.a.run.app/docs>
+Health (production): <https://resolveai-backend-epgr7hjata-el.a.run.app/health>
+
+Frontend (production): <https://resolveai-multi-agent-nu.vercel.app/>
 API Version: `v1`
 All versioned endpoints use the prefix: `/api/v1`
 
@@ -12,7 +18,7 @@ All versioned endpoints use the prefix: `/api/v1`
 
 Health check endpoint for load balancers and monitoring.
 
-#### Response
+#### Response (200) — /health
 
 ```json
 {"status": "ok", "service": "resolveai"}
@@ -22,7 +28,7 @@ Health check endpoint for load balancers and monitoring.
 
 Root endpoint with API information.
 
-#### Response
+#### Response (200) — /
 
 ```json
 {
@@ -61,8 +67,10 @@ Process a customer query through the hierarchical agent workflow.
 }
 ```
 
+Note: for compatibility, the backend also accepts `message` as an alias of `query`.
+
 | Field | Type | Required | Description |
-|-------|------|----------|-------------|
+| ----- | ---- | -------- | ----------- |
 | `query` | string | ✅ Yes | Customer query (min 1 char) |
 | `customer_name` | string | No | Used for personalization |
 | `mobile_number` | string | No | Used for personalization (min 5 chars) |
@@ -105,7 +113,7 @@ Process a customer query through the hierarchical agent workflow.
 
 Retrieve stored run metadata by trace ID.
 
-#### Response (200)
+#### Response (200) — /api/v1/runs/{trace_id}
 
 ```json
 {
@@ -143,7 +151,7 @@ All application errors follow this structure:
 ```
 
 | HTTP Status | Code | Description |
-|-------------|------|-------------|
+| ----------- | ---- | ----------- |
 | 400 | `validation_error` | Invalid request data |
 | 429 | `rate_limit_exceeded` | Too many requests |
 | 500 | `internal_server_error` | Unexpected server error |

@@ -1,5 +1,15 @@
 # ResolveAI — Low Level Design (LLD)
 
+## Live Demo (Production)
+
+- Frontend (Vercel): <https://resolveai-multi-agent-nu.vercel.app/>
+- Backend (Cloud Run): <https://resolveai-backend-epgr7hjata-el.a.run.app>
+- Backend API docs: <https://resolveai-backend-epgr7hjata-el.a.run.app/docs>
+
+## Deployment
+
+For step-by-step setup and deployment instructions (Local, Docker Compose, and Vercel frontend configuration), see: `docs/INSTALLATION.md`.
+
 ## 1. Backend
 
 ### 1.1 Tech
@@ -48,7 +58,8 @@
 
 Artifacts written under:
 
-- `Agents/hierarchical_results/run_<timestamp>_<trace_id>/`
+- Default: `/tmp/resolveai/hierarchical_results/run_<YYYYMMDD_HHMMSS>_<trace_id[:8]>/`
+- Override via `RESOLVEAI_RESULTS_DIR` (or `RESULTS_DIR`)
 
 Contains:
 

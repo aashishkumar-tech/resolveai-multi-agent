@@ -1,5 +1,15 @@
 # ResolveAI — Technical Design Document (TDD)
 
+## Live Demo (Production)
+
+- Frontend (Vercel): <https://resolveai-multi-agent-nu.vercel.app/>
+- Backend (Cloud Run): <https://resolveai-backend-epgr7hjata-el.a.run.app>
+- Backend API docs: <https://resolveai-backend-epgr7hjata-el.a.run.app/docs>
+
+## Deployment
+
+For step-by-step setup and deployment instructions (Local, Docker Compose, and Vercel frontend configuration), see: `docs/INSTALLATION.md`.
+
 ## 1. Document control
 
 - **System**: ResolveAI
@@ -104,9 +114,9 @@ It uses:
 
 ## 6. Data contracts
 
-### 6.1 API: POST /chat
+### 6.1 API: POST /api/v1/chat
 
-**Request**
+#### Request
 
 ```json
 {
@@ -116,7 +126,7 @@ It uses:
 }
 ```
 
-**Response**
+#### Response
 
 ```json
 {

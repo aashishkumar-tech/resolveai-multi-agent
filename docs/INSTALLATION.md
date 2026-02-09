@@ -4,6 +4,13 @@ This guide explains how to set up and run the ResolveAI project on a new machine
 
 > Repo module: `hierarchical_app/`
 
+## Live Demo (Production)
+
+- Frontend (Vercel): <https://resolveai-multi-agent-nu.vercel.app/>
+- Backend (Cloud Run): <https://resolveai-backend-epgr7hjata-el.a.run.app>
+- Backend health: <https://resolveai-backend-epgr7hjata-el.a.run.app/health>
+- Backend API docs: <https://resolveai-backend-epgr7hjata-el.a.run.app/docs>
+
 ---
 
 ## 1) Prerequisites
@@ -29,7 +36,7 @@ You must have:
 
 After cloning, you should have:
 
-```
+```text
 <your-parent-folder>/
   hierarchical_app/
     backend/
@@ -53,7 +60,7 @@ We will refer to:
 
 From **Backend root**:
 
-```
+```powershell
 cd <your-parent-folder>\hierarchical_app\backend
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
@@ -61,7 +68,7 @@ python -m venv .venv
 
 #### Windows (CMD)
 
-```
+```bat
 cd <your-parent-folder>\hierarchical_app\backend
 python -m venv .venv
 .\.venv\Scripts\activate.bat
@@ -73,7 +80,7 @@ python -m venv .venv
 
 From **Backend root** (venv activated):
 
-```
+```powershell
 pip install -r requirements.txt
 ```
 
@@ -81,25 +88,31 @@ pip install -r requirements.txt
 
 Copy the example env file and fill in your keys:
 
-```
+```powershell
 copy .env.example .env
 ```
 
 Edit `.env` with your values:
 
-```
+```dotenv
 GROQ_API_KEY=your_key_here
 TAVILY_API_KEY=your_key_here
 LOG_LEVEL=INFO
 ENVIRONMENT=development
 ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+
+# Optional: where run artifacts are stored (request/response/run.json/graph.png)
+# Default is a temp folder:
+# - Linux/Cloud Run: /tmp/resolveai/hierarchical_results
+# - Windows: C:\tmp\resolveai\hierarchical_results
+RESOLVEAI_RESULTS_DIR=C:\tmp\resolveai\hierarchical_results
 ```
 
 ### 3.4 Run the backend
 
 From **Backend root**:
 
-```
+```powershell
 python -m uvicorn app.main:app --reload --port 8000
 ```
 
@@ -114,19 +127,19 @@ Verify:
 
 From **Backend root** (venv activated):
 
-```
+```powershell
 pytest tests/ -v
 ```
 
 With coverage:
 
-```
+```powershell
 pytest tests/ -v --cov=app --cov-report=html
 ```
 
 ### 3.6 Run linting
 
-```
+```powershell
 ruff check app/
 ruff format app/ --check
 ```
@@ -139,7 +152,7 @@ ruff format app/ --check
 
 From **Frontend root**:
 
-```
+```powershell
 cd <your-parent-folder>\hierarchical_app\frontend
 npm install
 ```
@@ -152,21 +165,43 @@ Create a file:
 
 Example (local backend):
 
-```
+```dotenv
 NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+```
+
+Example (production backend on Cloud Run):
+
+```dotenv
+NEXT_PUBLIC_API_BASE_URL=https://resolveai-backend-epgr7hjata-el.a.run.app
 ```
 
 ### 4.3 Run the frontend
 
 From **Frontend root**:
 
-```
+```powershell
 npm run dev
 ```
 
 Open:
 
 - `http://localhost:3000`
+
+---
+
+## 4.4 Deploy frontend to Vercel (Production)
+
+1. Go to Vercel and **Import** the GitHub repository.
+1. Set **Root Directory** to `hierarchical_app/frontend`.
+1. Add this environment variable:
+
+  `NEXT_PUBLIC_API_BASE_URL=https://resolveai-backend-epgr7hjata-el.a.run.app`
+
+1. Deploy.
+
+After deployment, your app URL will look like:
+
+- `https://<your-project>.vercel.app/`
 
 ---
 
@@ -178,7 +213,7 @@ You started uvicorn from the wrong folder.
 
 Fix: run uvicorn from **Backend root**:
 
-```
+```powershell
 cd <your-parent-folder>\hierarchical_app\backend
 python -m uvicorn app.main:app --reload --port 8000
 ```
@@ -192,6 +227,15 @@ If Next.js crashes due to `src/app/favicon.ico`, remove that file and clear `.ne
 - Confirm `GROQ_API_KEY` and `TAVILY_API_KEY` exist in `backend/.env`
 - Restart backend after changing `.env`
 
+#### (Cloud Run) Secret encoding issues on Windows
+
+If you see errors like:
+
+- `Secret ... contains non-UTF8 data` (startup abort)
+- `Illegal header value ... Bearer ...\r\n`
+
+Re-upload secrets using UTF-8 files (avoid PowerShell piping).
+
 ---
 
 ## 6) One-click local run (optional)
@@ -204,7 +248,7 @@ Create VS Code tasks to start backend and frontend together.
 
 From **Project root** (where `docker-compose.yml` is):
 
-```
+```bash
 docker compose up --build
 ```
 
@@ -212,19 +256,19 @@ This starts both backend (port 8000) and frontend (port 3000).
 
 To run in background:
 
-```
+```bash
 docker compose up -d
 ```
 
 To view logs:
 
-```
+```bash
 docker compose logs -f
 ```
 
 To stop:
 
-```
+```bash
 docker compose down
 ```
 
@@ -255,7 +299,7 @@ Triggered on push to `main`:
 
 ### Setup Pre-commit Hooks
 
-```
+```bash
 pip install pre-commit
 pre-commit install
 ```

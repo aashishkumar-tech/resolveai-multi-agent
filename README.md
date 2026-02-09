@@ -2,6 +2,13 @@
 
 AI-powered customer service resolution system using a hierarchical multi-agent architecture built with LangGraph.
 
+## Live Demo
+
+- Frontend (Vercel): <https://resolveai-multi-agent-nu.vercel.app/>
+- Backend (Cloud Run): <https://resolveai-backend-epgr7hjata-el.a.run.app>
+- Backend health: <https://resolveai-backend-epgr7hjata-el.a.run.app/health>
+- Backend API docs: <https://resolveai-backend-epgr7hjata-el.a.run.app/docs>
+
 ## 🏗️ Architecture
 
 ```
@@ -148,10 +155,27 @@ gcloud services enable secretmanager.googleapis.com
 
 ### Store Secrets
 
+Important (Windows): avoid piping secrets via PowerShell because it can upload UTF-16 / non-UTF8 bytes.
+
+Recommended approach:
+
+1) Create UTF-8 text files (no BOM), e.g.:
+
+- `C:\temp\groq.txt`
+- `C:\temp\tavily.txt`
+
+1) Upload as Secret Manager versions:
+
 ```bash
-# Store API keys in Secret Manager
-echo "your-groq-api-key" | gcloud secrets create groq-api-key --data-file=-
-echo "your-tavily-api-key" | gcloud secrets create tavily-api-key --data-file=-
+gcloud secrets create groq-api-key --data-file="C:\\temp\\groq.txt"
+gcloud secrets create tavily-api-key --data-file="C:\\temp\\tavily.txt"
+```
+
+If the secrets already exist:
+
+```bash
+gcloud secrets versions add groq-api-key --data-file="C:\\temp\\groq.txt"
+gcloud secrets versions add tavily-api-key --data-file="C:\\temp\\tavily.txt"
 ```
 
 ### Create Artifact Registry
@@ -184,6 +208,24 @@ gcloud run deploy resolveai-backend \
     --allow-unauthenticated \
     --set-secrets GROQ_API_KEY=groq-api-key:latest,TAVILY_API_KEY=tavily-api-key:latest
 ```
+
+### Cloud Run persistence note
+
+  Cloud Run containers can only write to `/tmp`. Run artifacts (run.json, graph.png, etc.) are stored under:
+
+- `/tmp/resolveai/hierarchical_results`
+
+  You can override the location with `RESOLVEAI_RESULTS_DIR`.
+
+## ▲ Vercel Deployment (Frontend)
+
+  1. Import the GitHub repo into Vercel.
+  2. Set the **Root Directory** to `hierarchical_app/frontend`.
+  3. Add environment variable:
+
+     - `NEXT_PUBLIC_API_BASE_URL=https://resolveai-backend-epgr7hjata-el.a.run.app`
+
+  4. Redeploy.
 
 ## 🔧 Configuration
 

@@ -1,5 +1,11 @@
 # ResolveAI — High Level Design (HLD)
 
+## Live Demo (Production)
+
+- Frontend (Vercel): <https://resolveai-multi-agent-nu.vercel.app/>
+- Backend (Cloud Run): <https://resolveai-backend-epgr7hjata-el.a.run.app>
+- Backend API docs: <https://resolveai-backend-epgr7hjata-el.a.run.app/docs>
+
 ## 1. Purpose
 
 ResolveAI provides fast, consistent, and personalized customer support responses by orchestrating an **agentic / multi-agent style workflow** (multiple specialized steps and roles coordinated by LangGraph) behind a user-friendly web UI.
@@ -24,12 +30,14 @@ ResolveAI provides fast, consistent, and personalized customer support responses
 - **Backend** (FastAPI): Receives chat requests; runs workflow; persists artifacts.
 - **LLM** (Groq): Generates final response and intermediate reasoning steps.
 - **Search Tool** (Tavily): Retrieves relevant web context.
-- **Storage** (Filesystem): Stores run artifacts under `Agents/hierarchical_results/`.
+- **Storage** (Filesystem): Stores run artifacts under a configurable results directory.
+  - Default: `/tmp/resolveai/hierarchical_results`
+  - Override via `RESOLVEAI_RESULTS_DIR` (or `RESULTS_DIR`)
 
 ## 5. Data Flow (Request → Response)
 
 1. User enters customer name, mobile number, and query in UI.
-2. Frontend calls `POST /chat`.
+2. Frontend calls `POST /api/v1/chat`.
 3. Backend constructs initial LangGraph state and runs workflow.
 4. Workflow may call Tavily search and LLM nodes.
 5. Backend post-processes output (personalization placeholder substitution).
@@ -73,8 +81,9 @@ ResolveAI provides fast, consistent, and personalized customer support responses
 
 ## 9. Production / Deployment
 
-- **Containerized**: Docker images for backend (Python) and frontend (Next.js).
-- **Orchestration**: Docker Compose for local; GCP Cloud Run for production.
+- **Frontend**: Vercel (Next.js)
+- **Backend**: GCP Cloud Run (FastAPI)
+- **Local**: Docker Compose for full-stack local runs
 - **CI/CD**: GitHub Actions pipeline with lint → test → build → deploy stages.
 - **Secrets**: GCP Secret Manager for API keys.
 - **Region**: `asia-south1` (Mumbai) for low latency.
