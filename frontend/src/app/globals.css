@@ -1,0 +1,54 @@
+/* stylelint-disable at-rule-no-unknown */
+/* csslint ignore:start */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* csslint ignore:end */
+/* stylelint-enable at-rule-no-unknown */
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  /* Clean base background */
+  background: linear-gradient(180deg, rgba(7, 10, 18, 1) 0%, rgba(6, 8, 14, 1) 60%, rgba(6, 8, 14, 1) 100%);
+  color: rgba(255, 255, 255, 0.92);
+}
+
+/* Top-only colorful glow + subtle grid overlay (static) */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(900px 500px at 15% 10%, rgba(56, 189, 248, 0.16), transparent 60%),
+    radial-gradient(800px 520px at 85% 15%, rgba(168, 85, 247, 0.14), transparent 62%),
+    radial-gradient(700px 520px at 55% 30%, rgba(236, 72, 153, 0.08), transparent 58%),
+    linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: auto, auto, auto, 72px 72px, 72px 72px;
+  opacity: 0.95;
+  /* Mask so color stays at top only */
+  mask-image: linear-gradient(to bottom, black 0%, black 26%, transparent 72%);
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 26%, transparent 72%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@keyframes spinSlow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
