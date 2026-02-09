@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from pydantic import Field
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from app.core.constants import (
@@ -20,6 +20,13 @@ class Settings(BaseSettings):
     llm_temperature: float = DEFAULT_LLM_TEMPERATURE
 
     max_iterations: int = DEFAULT_MAX_ITERATIONS
+
+    @field_validator("groq_api_key", "tavily_api_key", mode="before")
+    @classmethod
+    def _strip_api_keys(cls, value: object) -> object:
+        if isinstance(value, str):
+            return value.strip()
+        return value
 
 
 settings = Settings()

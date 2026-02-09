@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from pathlib import Path
@@ -20,10 +21,13 @@ class RunArtifacts:
 
 
 def workspace_results_dir() -> Path:
-    # Repo layout: AIAgent/hierarchical_app/backend/app/storage/persistence.py
-    # We want:   AIAgent/Agents/hierarchical_results/
-    repo_root = Path(__file__).resolve().parents[5]
-    return repo_root / "Agents" / "hierarchical_results"
+    configured = os.getenv("RESOLVEAI_RESULTS_DIR") or os.getenv("RESULTS_DIR")
+    if configured:
+        return Path(configured)
+
+    # In Cloud Run, the container filesystem is largely read-only; /tmp is writable.
+    # Use a stable default that works in prod and local dev.
+    return Path("/tmp") / "resolveai" / "hierarchical_results"
 
 
 def persist_run(artifacts: RunArtifacts) -> Path:

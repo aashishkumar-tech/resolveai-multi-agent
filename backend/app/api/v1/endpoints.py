@@ -13,7 +13,7 @@ from fastapi.responses import FileResponse, StreamingResponse
 
 from app.core.logger import get_logger
 from app.schemas import ChatRequest, ChatResponse
-from app.storage.persistence import RunArtifacts, persist_run
+from app.storage.persistence import RunArtifacts, persist_run, workspace_results_dir
 from app.workflow.graph import build_graph
 from app.workflow.runner import run_workflow, stream_workflow_events
 from app.workflow.visualize import render_graph_png
@@ -102,7 +102,7 @@ def chat(req: ChatRequest, request: Request) -> ChatResponse:  # noqa: ARG001
 @router.get("/runs/{trace_id}", response_model=None)
 def get_run(trace_id: str):
     """Retrieve a stored run by trace ID."""
-    base = Path(__file__).resolve().parents[6] / "Agents" / "hierarchical_results"
+    base = workspace_results_dir()
     if not base.exists():
         return {"error": "no runs"}
 
@@ -120,7 +120,7 @@ def get_run(trace_id: str):
 @router.get("/runs/{trace_id}/graph.png", response_model=None)
 def get_run_graph(trace_id: str):
     """Retrieve the graph visualization for a run."""
-    base = Path(__file__).resolve().parents[6] / "Agents" / "hierarchical_results"
+    base = workspace_results_dir()
     candidates = sorted(base.glob(f"run_*_{trace_id[:8]}"), reverse=True)
     if not candidates:
         return {"error": "not found"}

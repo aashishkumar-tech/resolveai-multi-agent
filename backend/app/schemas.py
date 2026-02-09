@@ -1,10 +1,15 @@
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
+from pydantic import AliasChoices, BaseModel, Field
 
 
 class ChatRequest(BaseModel):
-    query: str = Field(..., min_length=1, description="Customer query")
+    query: str = Field(
+        ...,
+        min_length=1,
+        description="Customer query",
+        validation_alias=AliasChoices("query", "message"),
+    )
     customer_name: str | None = Field(
         default=None,
         description="Customer name (used to personalize the response)",

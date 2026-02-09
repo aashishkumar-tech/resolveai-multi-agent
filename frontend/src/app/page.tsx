@@ -68,9 +68,14 @@ export default function Page() {
 
   async function fetchTrace(runTraceId: string) {
     const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
-    const t = await fetch(`${baseUrl}/runs/${runTraceId}`).then((r) => r.json());
-    const graph_png_url = t.graph_png_url ? `${baseUrl}${t.graph_png_url}` : undefined;
-    setTrace({ ...t, graph_png_url });
+    try {
+      const resp = await fetch(`${baseUrl}/api/v1/runs/${runTraceId}`);
+      const t = await resp.json();
+      const graph_png_url = t.graph_png_url ? `${baseUrl}${t.graph_png_url}` : undefined;
+      setTrace({ ...t, graph_png_url });
+    } catch {
+      setTrace(null);
+    }
   }
 
   async function sendQuery(query: string) {
