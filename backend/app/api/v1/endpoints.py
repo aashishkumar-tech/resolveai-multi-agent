@@ -6,7 +6,6 @@ import json
 import uuid
 from collections.abc import AsyncGenerator
 from datetime import UTC, datetime
-from pathlib import Path
 
 from fastapi import APIRouter, Request
 from fastapi.responses import FileResponse, StreamingResponse
