@@ -8,7 +8,6 @@ from collections.abc import Generator
 import pytest
 from fastapi.testclient import TestClient
 
-
 # Set test environment variables before importing app
 os.environ.setdefault("GROQ_API_KEY", "test-groq-key")
 os.environ.setdefault("TAVILY_API_KEY", "test-tavily-key")
