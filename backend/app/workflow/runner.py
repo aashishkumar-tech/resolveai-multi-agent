@@ -9,7 +9,9 @@ from langchain_core.messages import HumanMessage
 from app.core.config import settings
 
 
-def _initial_state(query: str, customer_name: str | None = None, mobile_number: str | None = None) -> dict[str, Any]:
+def _initial_state(
+    query: str, customer_name: str | None = None, mobile_number: str | None = None
+) -> dict[str, Any]:
     return {
         "messages": [HumanMessage(content=query)],
         "customer_query": query,
@@ -57,7 +59,9 @@ def run_workflow(
     }
 
 
-async def stream_workflow_events(graph, query: str, trace_id: str | None = None) -> AsyncGenerator[dict[str, Any], None]:
+async def stream_workflow_events(
+    graph, query: str, trace_id: str | None = None
+) -> AsyncGenerator[dict[str, Any], None]:
     # LangGraph streaming depends on version; use iterative invoke steps when available.
     # Here, we emit coarse-grained events for UI (start/end + final).
     yield {"type": "start", "trace_id": trace_id, "query": query}
@@ -68,7 +72,5 @@ async def stream_workflow_events(graph, query: str, trace_id: str | None = None)
 def _fallback_final(result: dict[str, Any]) -> str:
     # Prefer formatted_response if final_response wasn't set
     return (
-        result.get("formatted_response")
-        or result.get("draft_response")
-        or "No response generated."
+        result.get("formatted_response") or result.get("draft_response") or "No response generated."
     )
