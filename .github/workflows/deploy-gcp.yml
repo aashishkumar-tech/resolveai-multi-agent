@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  PROJECT_ID: ${{ vars.GCP_PROJECT_ID || secrets.GCP_PROJECT_ID }}
   REGION: asia-south1
   BACKEND_SERVICE: resolveai-backend
   FRONTEND_SERVICE: resolveai-frontend
@@ -27,10 +27,44 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Authenticate to Google Cloud
+      - name: Select GCP auth mode
+        id: auth_mode
+        shell: bash
+        run: |
+          if [[ -n "${{ secrets.GCP_SA_KEY }}" ]]; then
+            echo "mode=key" >> "$GITHUB_OUTPUT"
+          elif [[ -n "${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}" && -n "${{ secrets.GCP_SERVICE_ACCOUNT }}" ]]; then
+            echo "mode=wif" >> "$GITHUB_OUTPUT"
+          else
+            echo "mode=none" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Validate GCP deployment inputs
+        shell: bash
+        run: |
+          if [[ "${{ steps.auth_mode.outputs.mode }}" == "none" ]]; then
+            echo "::error::Missing GCP auth configuration. Set either:"
+            echo "::error::1) secret GCP_SA_KEY, or"
+            echo "::error::2) secrets GCP_WORKLOAD_IDENTITY_PROVIDER + GCP_SERVICE_ACCOUNT"
+            exit 1
+          fi
+          if [[ -z "${{ env.PROJECT_ID }}" ]]; then
+            echo "::error::Missing PROJECT_ID. Set repo variable GCP_PROJECT_ID or secret GCP_PROJECT_ID."
+            exit 1
+          fi
+
+      - name: Authenticate to Google Cloud (service account key)
+        if: ${{ steps.auth_mode.outputs.mode == 'key' }}
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Authenticate to Google Cloud (workload identity)
+        if: ${{ steps.auth_mode.outputs.mode == 'wif' }}
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
@@ -81,10 +115,44 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Authenticate to Google Cloud
+      - name: Select GCP auth mode
+        id: auth_mode
+        shell: bash
+        run: |
+          if [[ -n "${{ secrets.GCP_SA_KEY }}" ]]; then
+            echo "mode=key" >> "$GITHUB_OUTPUT"
+          elif [[ -n "${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}" && -n "${{ secrets.GCP_SERVICE_ACCOUNT }}" ]]; then
+            echo "mode=wif" >> "$GITHUB_OUTPUT"
+          else
+            echo "mode=none" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Validate GCP deployment inputs
+        shell: bash
+        run: |
+          if [[ "${{ steps.auth_mode.outputs.mode }}" == "none" ]]; then
+            echo "::error::Missing GCP auth configuration. Set either:"
+            echo "::error::1) secret GCP_SA_KEY, or"
+            echo "::error::2) secrets GCP_WORKLOAD_IDENTITY_PROVIDER + GCP_SERVICE_ACCOUNT"
+            exit 1
+          fi
+          if [[ -z "${{ env.PROJECT_ID }}" ]]; then
+            echo "::error::Missing PROJECT_ID. Set repo variable GCP_PROJECT_ID or secret GCP_PROJECT_ID."
+            exit 1
+          fi
+
+      - name: Authenticate to Google Cloud (service account key)
+        if: ${{ steps.auth_mode.outputs.mode == 'key' }}
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Authenticate to Google Cloud (workload identity)
+        if: ${{ steps.auth_mode.outputs.mode == 'wif' }}
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
