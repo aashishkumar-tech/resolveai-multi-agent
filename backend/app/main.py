@@ -15,8 +15,8 @@ from slowapi.util import get_remote_address
 
 from app.api.v1 import router as v1_router
 from app.core.exception import AppError
-from app.core.logger import get_logger
 from app.core.langsmith_setup import setup_langsmith
+from app.core.logger import get_logger
 
 # Initialize rate limiter
 limiter = Limiter(key_func=get_remote_address)
