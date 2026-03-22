@@ -12,6 +12,9 @@ langchain-community>=0.2.0
 langchain-groq>=0.1.0
 tavily-python>=0.3.0
 
+# LangSmith tracing
+langsmith>=0.1.0
+
 # Rate Limiting
 slowapi>=0.1.9
 
