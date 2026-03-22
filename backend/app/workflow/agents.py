@@ -101,7 +101,7 @@ def researcher_agent(state: HierarchicalState):
 
     return {
         "messages": [AIMessage(content="Researcher: gathered web research")],
-           "research_data": results,
+        "research_data": results,
         "team_outputs": {**state.get("team_outputs", {}), "researcher": results},
         "next_agent": "sentiment_agent",
     }
