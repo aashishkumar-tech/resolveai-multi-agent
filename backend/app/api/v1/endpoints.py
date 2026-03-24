@@ -94,6 +94,8 @@ def chat(req: ChatRequest, request: Request) -> ChatResponse:  # noqa: ARG001
     graph_path = run_dir / "graph.png"
     render_graph_png(GRAPH, graph_path)
 
+
+        router = APIRouter()
     logger.info(
         "Chat request completed",
         extra={"trace_id": trace_id, "duration_s": result.get("duration_s")},
