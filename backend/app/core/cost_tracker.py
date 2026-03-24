@@ -1,12 +1,14 @@
-from dataclasses import dataclass, field
-from typing import Dict
+
 import time
+from dataclasses import dataclass, field
+
 
 GROQ_PRICING = {
-    "llama3-70b-8192":    {"input": 0.59, "output": 0.79},
-    "llama3-8b-8192":     {"input": 0.05, "output": 0.08},
+    "llama3-70b-8192": {"input": 0.59, "output": 0.79},
+    "llama3-8b-8192": {"input": 0.05, "output": 0.08},
     "mixtral-8x7b-32768": {"input": 0.24, "output": 0.24},
 }
+
 
 @dataclass
 class ConversationMetrics:
@@ -30,7 +32,7 @@ class ConversationMetrics:
             (self.output_tokens / 1_000_000) * p["output"], 6
         )
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> dict:
         return {
             "trace_id": self.trace_id,
             "duration_seconds": self.duration_seconds,
@@ -41,12 +43,15 @@ class ConversationMetrics:
             "estimated_cost_usd": self.estimated_cost_usd,
         }
 
-_registry: Dict[str, ConversationMetrics] = {}
+
+_registry: dict[str, ConversationMetrics] = {}
+
 
 def start_tracking(trace_id: str, model: str = "llama3-70b-8192") -> ConversationMetrics:
     m = ConversationMetrics(trace_id=trace_id, model=model)
     _registry[trace_id] = m
     return m
+
 
 def get_metrics(trace_id: str) -> ConversationMetrics | None:
     return _registry.get(trace_id)

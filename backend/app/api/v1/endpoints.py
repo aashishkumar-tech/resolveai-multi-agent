@@ -7,10 +7,11 @@ import uuid
 from collections.abc import AsyncGenerator
 from datetime import UTC, datetime
 
+
 from fastapi import APIRouter, Request
-from app.core.cost_tracker import get_metrics
 from fastapi.responses import FileResponse, StreamingResponse
 
+from app.core.cost_tracker import get_metrics
 from app.core.logger import get_logger
 from app.schemas import ChatRequest, ChatResponse
 from app.storage.persistence import RunArtifacts, persist_run, workspace_results_dir
