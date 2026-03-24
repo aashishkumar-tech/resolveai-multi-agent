@@ -1,4 +1,3 @@
-
 """API v1 endpoints for ResolveAI."""
 
 from __future__ import annotations
@@ -20,6 +19,8 @@ from app.workflow.runner import run_workflow, stream_workflow_events
 from app.workflow.visualize import render_graph_png
 
 router = APIRouter()
+
+
 # --- Cost & Token Metrics Endpoint ---
 @router.get("/metrics/{trace_id}")
 def get_metrics_endpoint(trace_id: str):
@@ -28,6 +29,8 @@ def get_metrics_endpoint(trace_id: str):
     if not metrics:
         return {"error": "No metrics found for this trace_id"}
     return metrics.to_dict()
+
+
 logger = get_logger("resolveai.api.v1")
 
 # Build graph once at module load
@@ -90,7 +93,6 @@ def chat(req: ChatRequest, request: Request) -> ChatResponse:  # noqa: ARG001
             duration_s=result.get("duration_s"),
         )
     )
-
 
     graph_path = run_dir / "graph.png"
     render_graph_png(GRAPH, graph_path)
