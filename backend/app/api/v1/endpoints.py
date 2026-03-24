@@ -8,6 +8,7 @@ from collections.abc import AsyncGenerator
 from datetime import UTC, datetime
 
 from fastapi import APIRouter, Request
+from app.core.cost_tracker import get_metrics
 from fastapi.responses import FileResponse, StreamingResponse
 
 from app.core.logger import get_logger
@@ -18,6 +19,14 @@ from app.workflow.runner import run_workflow, stream_workflow_events
 from app.workflow.visualize import render_graph_png
 
 router = APIRouter()
+# --- Cost & Token Metrics Endpoint ---
+@router.get("/metrics/{trace_id}")
+def get_metrics_endpoint(trace_id: str):
+    """Get conversation metrics (tokens, cost, duration, etc) for a given trace_id."""
+    metrics = get_metrics(trace_id)
+    if not metrics:
+        return {"error": "No metrics found for this trace_id"}
+    return metrics.to_dict()
 logger = get_logger("resolveai.api.v1")
 
 # Build graph once at module load
