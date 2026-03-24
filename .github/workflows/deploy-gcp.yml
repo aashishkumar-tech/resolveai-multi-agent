@@ -10,6 +10,7 @@ env:
   REGION: asia-south1
   BACKEND_SERVICE: resolveai-backend
   FRONTEND_SERVICE: resolveai-frontend
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 jobs:
   deploy-backend:
