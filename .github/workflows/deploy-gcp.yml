@@ -31,9 +31,9 @@ jobs:
       - name: Select GCP auth mode
         id: auth_mode
         run: |
-          if [[ -n "${{ secrets.GCP_SA_KEY }}" ]]; then
+          if [ -n "${{ secrets.GCP_SA_KEY }}" ]; then
             echo "mode=key" >> "$GITHUB_OUTPUT"
-          elif [[ -n "${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}" && -n "${{ secrets.GCP_SERVICE_ACCOUNT }}" ]]; then
+          elif [ -n "${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}" ] && [ -n "${{ secrets.GCP_SERVICE_ACCOUNT }}" ]; then
             echo "mode=wif" >> "$GITHUB_OUTPUT"
           else
             echo "mode=none" >> "$GITHUB_OUTPUT"
@@ -119,9 +119,9 @@ jobs:
       - name: Select GCP auth mode
         id: auth_mode
         run: |
-          if [[ -n "${{ secrets.GCP_SA_KEY }}" ]]; then
+          if [ -n "${{ secrets.GCP_SA_KEY }}" ]; then
             echo "mode=key" >> "$GITHUB_OUTPUT"
-          elif [[ -n "${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}" && -n "${{ secrets.GCP_SERVICE_ACCOUNT }}" ]]; then
+          elif [ -n "${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}" ] && [ -n "${{ secrets.GCP_SERVICE_ACCOUNT }}" ]; then
             echo "mode=wif" >> "$GITHUB_OUTPUT"
           else
             echo "mode=none" >> "$GITHUB_OUTPUT"
