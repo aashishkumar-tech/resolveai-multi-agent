@@ -30,7 +30,6 @@ jobs:
 
       - name: Select GCP auth mode
         id: auth_mode
-        shell: bash
         run: |
           if [[ -n "${{ secrets.GCP_SA_KEY }}" ]]; then
             echo "mode=key" >> "$GITHUB_OUTPUT"
@@ -39,6 +38,7 @@ jobs:
           else
             echo "mode=none" >> "$GITHUB_OUTPUT"
           fi
+        shell: bash
 
       - name: Validate GCP deployment inputs
         shell: bash
@@ -118,7 +118,6 @@ jobs:
 
       - name: Select GCP auth mode
         id: auth_mode
-        shell: bash
         run: |
           if [[ -n "${{ secrets.GCP_SA_KEY }}" ]]; then
             echo "mode=key" >> "$GITHUB_OUTPUT"
@@ -127,6 +126,7 @@ jobs:
           else
             echo "mode=none" >> "$GITHUB_OUTPUT"
           fi
+        shell: bash
 
       - name: Validate GCP deployment inputs
         shell: bash
