@@ -1,7 +1,5 @@
-
 import time
 from dataclasses import dataclass, field
-
 
 GROQ_PRICING = {
     "llama3-70b-8192": {"input": 0.59, "output": 0.79},
@@ -28,8 +26,9 @@ class ConversationMetrics:
     def estimated_cost_usd(self) -> float:
         p = GROQ_PRICING.get(self.model, {"input": 0.59, "output": 0.79})
         return round(
-            (self.input_tokens / 1_000_000) * p["input"] +
-            (self.output_tokens / 1_000_000) * p["output"], 6
+            (self.input_tokens / 1_000_000) * p["input"]
+            + (self.output_tokens / 1_000_000) * p["output"],
+            6,
         )
 
     def to_dict(self) -> dict:

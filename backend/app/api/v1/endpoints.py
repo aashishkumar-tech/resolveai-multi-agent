@@ -1,3 +1,4 @@
+
 """API v1 endpoints for ResolveAI."""
 
 from __future__ import annotations
@@ -6,7 +7,6 @@ import json
 import uuid
 from collections.abc import AsyncGenerator
 from datetime import UTC, datetime
-
 
 from fastapi import APIRouter, Request
 from fastapi.responses import FileResponse, StreamingResponse
